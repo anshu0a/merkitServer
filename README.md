@@ -26,30 +26,30 @@ Then reference them in this README:
 
 ### Home
 
-![Merkit Home](screenshots/home.png)
+![Merkit Home](screenshot/home.png)
 
 ### Digital Create
 
-![Article](screenshots/create1.png)
-![Prediction](screenshots/create2.png)
+![Article](screenshot/create1.png)
+![Prediction](screenshot/create2.png)
 
 ### Capsule Map
 
-![Capsule Map](screenshots/map.png)
+![Capsule Map](screenshot/map.png)
 
 ### Calendar
 
-![Timeline](screenshots/date.png)
+![Timeline](screenshot/date.png)
 
 ### AI Chatbot
 
-![AI Chatbot](screenshots/bot1.png)
-![History](screenshots/bot2.png)
-![Language](screenshots/bot3.png)
+![AI Chatbot](screenshot/bot1.png)
+![History](screenshot/bot2.png)
+![Language](screenshot/bot3.png)
 
 ### Not Found
 
-![404](screenshots/notfound.png)
+![404](screenshot/notfound.png)
 
 ---
 
