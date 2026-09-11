@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring accessors="true" comment="Delete element from project &apos;99_demo_package&apos;&#x0D;&#x0A;- Original project: &apos;99_demo_package&apos;&#x0D;&#x0A;- Original element: &apos;99_demo_package/src/main/java/com.merkit&apos;" description="Delete element" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.merkit" element2="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com" elements="2" flags="589830" id="org.eclipse.jdt.ui.delete" resources="0" stamp="1786095699119" subPackages="false" version="1.0"/>
-</session>

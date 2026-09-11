@@ -1,8 +1,0 @@
-package com.merkit.dto.res;
-
-import lombok.Builder;
-
-@Builder
-public record AIChatList(String name, Long chatid, Integer question) {
-
-}

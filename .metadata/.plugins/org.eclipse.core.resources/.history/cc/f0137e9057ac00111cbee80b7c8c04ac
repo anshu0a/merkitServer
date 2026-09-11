@@ -1,9 +1,0 @@
-package com.merkit.repo;
-
-import org.springframework.data.jpa.repository.JpaRepository;
-
-import com.merkit.entity.AIChat;
-
-interface AIChatRepository extends JpaRepository<AIChat, Long> {
-
-}

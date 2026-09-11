@@ -1,5 +1,0 @@
-package com.merkit.dto.res;
-
-public record ChatListResponse(String name, Long chatid) {
-
-}

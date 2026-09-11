@@ -1,5 +1,0 @@
-package com.merkit.dto.res;
-
-public record AIChatList(String name, Long chatid) {
-
-}
