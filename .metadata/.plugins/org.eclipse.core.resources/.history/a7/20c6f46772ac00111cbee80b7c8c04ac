@@ -1,0 +1,121 @@
+package com.merkit.service.impl;
+
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import org.apache.hc.core5.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.merkit.repo.AIMessageRepository;
+import com.merkit.service.AIMessageService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class AIMessageServiceImpl implements AIMessageService {
+
+	private final AIMessageRepository aiMessageRepository;
+	
+	
+	
+	
+
+private String getAnswer(String prompt) {
+	
+	String url =  "https://api.groq.com/openai/v1/chat/completions";
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode root = mapper.createObjectNode();
+    root.put("model", "llama-3.1-8b-instant");
+    ArrayNode messages = mapper.createArrayNode();
+    ObjectNode userMessage = mapper.createObjectNode();
+
+    userMessage.put("role", "user");
+    userMessage.put("content", prompt);
+
+    messages.add(userMessage);
+    root.set("messages", messages);
+    String body = mapper.writeValueAsString(root);
+    HttpClient client = HttpClient.newHttpClient();
+    
+    HttpRequest request = HttpRequest.newBuilder()
+            .uri(URI.create(url))
+            .header("Content-Type", "application/json")
+            .header("Authorization", "Bearer " + apiKey)
+            .POST(HttpRequest.BodyPublishers.ofString(body))
+            .build();
+
+    HttpResponse<String> response =client.send(request,HttpResponse.BodyHandlers.ofString());
+    System.out.println(response.body());
+    JsonNode json =mapper.readTree(response.body());
+    String answer = json
+            .path("choices")
+            .path(0)
+            .path("message")
+            .path("content")
+            .asText();
+	//String answer = AI.ask(prompt, apiKey);
+
+	if (answer == null || answer.isBlank()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("AI did not return answer");
+
+	
+}
+
+
+
+
+}
+//try {
+//	
+//	String prompt = req.getPrompt();
+//	String url =  "https://api.groq.com/openai/v1/chat/completions";
+//    ObjectMapper mapper = new ObjectMapper();
+//    ObjectNode root = mapper.createObjectNode();
+//    root.put("model", "llama-3.1-8b-instant");
+//    ArrayNode messages = mapper.createArrayNode();
+//    ObjectNode userMessage = mapper.createObjectNode();
+//
+//    userMessage.put("role", "user");
+//    userMessage.put("content", prompt);
+//
+//    messages.add(userMessage);
+//    root.set("messages", messages);
+//    String body = mapper.writeValueAsString(root);
+//    HttpClient client = HttpClient.newHttpClient();
+//    
+//    HttpRequest request = HttpRequest.newBuilder()
+//            .uri(URI.create(url))
+//            .header("Content-Type", "application/json")
+//            .header("Authorization", "Bearer " + apiKey)
+//            .POST(HttpRequest.BodyPublishers.ofString(body))
+//            .build();
+//
+//    HttpResponse<String> response =client.send(request,HttpResponse.BodyHandlers.ofString());
+//    System.out.println(response.body());
+//    JsonNode json =mapper.readTree(response.body());
+//    String answer = json
+//            .path("choices")
+//            .path(0)
+//            .path("message")
+//            .path("content")
+//            .asText();
+//	//String answer = AI.ask(prompt, apiKey);
+//
+//	if (answer == null || answer.isBlank()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("AI did not return answer");
+//
+//	Chat_Messages msg = new Chat_Messages(prompt, answer);
+//	Chat_Messages saved = svs.addMessage(msg);
+//
+//	return ResponseEntity.ok(saved);
+//
+//} catch (Exception e) {
+//	e.printStackTrace();
+//	return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error : " + e.getMessage());
+//}

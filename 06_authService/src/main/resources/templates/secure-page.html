@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+ <head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reset Link Expired</title>
+
+<style>
+
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        font-family: Arial, Helvetica, sans-serif;
+        color: #1f2937;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 440px;
+        padding: 20px;
+    }
+
+    .card {
+        text-align: center;
+    }
+
+    .icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: #f1f5f9;
+        font-size: 27px;
+    }
+
+    .title {
+        margin: 0;
+        font-size: 26px;
+        font-weight: 600;
+    }
+
+    .message {
+        margin: 12px 0 0;
+        font-size: 14px;
+        line-height: 22px;
+        color: #64748b;
+    }
+
+    .info {
+        margin-top: 22px;
+        padding: 14px 16px;
+        border-radius: 7px;
+        background: #f8fafc;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 20px;
+    }
+
+    .button {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 46px;
+        margin-top: 25px;
+        border-radius: 7px;
+        border: 1px solid #1f2937;
+        background: #1f2937;
+        color: #ffffff;
+        font-size: 14px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: 0.2s;
+    }
+
+    .button:hover {
+        background: #111827;
+    }
+
+    .login-link {
+        display: block;
+        margin-top: 16px;
+        color: #475569;
+        font-size: 13px;
+        text-decoration: none;
+    }
+
+    .login-link:hover {
+        text-decoration: underline;
+    }
+
+    .security-text {
+        margin-top: 24px;
+        padding-top: 18px;
+        border-top: 1px solid #edf0f2;
+        font-size: 12px;
+        line-height: 18px;
+        color: #89919c;
+    }
+
+    @media (max-width: 480px) {
+
+        .container {
+            padding: 15px;
+        }
+
+        .card {
+            padding: 35px 24px;
+        }
+
+        .title {
+            font-size: 24px;
+        }
+
+    }
+
+</style>
+</head> <body>
+<div class="container">
+
+    <div class="card">
+
+        <div class="icon">
+            🔒
+        </div>
+
+        <h1 class="title">
+            Reset Link Expired
+        </h1>
+
+        <p class="message">
+            This password reset link has expired and
+            can no longer be used.
+        </p>
+
+        <div class="info">
+            Don't worry, your account is still secure.
+            You can request a new password reset link
+            to change your password.
+        </div>
+
+        <a
+            th:href="${front+'/forgot'}"
+            class="button">
+            Request New Reset Link
+        </a>
+
+        <a
+            th:href="${front+'/login'}"
+            class="login-link">
+            Back to Login
+        </a>
+
+        <div class="security-text">
+            Password reset links are valid for a limited
+            time to help keep your account secure.
+        </div>
+
+    </div>
+
+</div>
+</body> </html>

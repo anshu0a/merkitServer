@@ -1,0 +1,10 @@
+package com.merkit.service;
+
+import com.merkit.entity.AIMessage;
+
+public interface AIMessageService {
+
+	public String getAnswer(String prompt);
+	AIMessage createMessage(String prompt); 
+
+}

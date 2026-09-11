@@ -1,0 +1,5 @@
+package com.merkit.dto.res;
+
+public class AIChatResponse {
+
+}

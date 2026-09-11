@@ -1,0 +1,5 @@
+package com.merkit.service;
+
+public interface ArticleService {
+
+}

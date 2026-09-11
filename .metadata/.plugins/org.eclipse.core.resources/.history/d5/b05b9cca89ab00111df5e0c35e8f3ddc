@@ -1,0 +1,43 @@
+package com.merkit.service.impl;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.merkit.dto.req.ArticleRequest;
+import com.merkit.entity.Article;
+import com.merkit.repo.ArticleRepository;
+import com.merkit.service.ArticleService;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class ArticleServiceImpl implements ArticleService {
+	private ArticleRepository articleRepo;
+
+	@Override
+	public Boolean save(ArticleRequest art) {
+		
+		Article article = Article.builder()
+		.title(art.getTitle())		
+		.article(art.getArticle())
+		.tag(art.getTag())
+		.createdAt(LocalDateTime.now())
+		.images(art.getImages().stream().collect(Collectors.toMap(Article.imgCnt++, (x)->x)))
+		.build();
+		
+		articleRepo.save(article);
+		
+		return null;
+	}
+
+	@Override
+	public List<Article> getAllArticle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

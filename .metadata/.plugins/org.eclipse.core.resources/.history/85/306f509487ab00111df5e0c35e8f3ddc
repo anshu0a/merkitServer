@@ -1,0 +1,5 @@
+package com.merkit.dto.req;
+
+public class RequestArticle {
+
+}

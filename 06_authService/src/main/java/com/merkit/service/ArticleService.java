@@ -1,0 +1,15 @@
+package com.merkit.service;
+
+import java.util.List;
+
+import org.springframework.security.core.Authentication;
+
+import com.merkit.dto.req.ArticleRequest;
+import com.merkit.dto.res.ApiResponse;
+import com.merkit.entity.Article;
+
+public interface ArticleService {
+	ApiResponse save(ArticleRequest art, Authentication authentication);
+
+	List<Article> getAllArticle(Authentication authentication);
+}

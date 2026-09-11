@@ -1,0 +1,11 @@
+package com.merkit.service;
+
+import java.net.Authenticator;
+
+import com.merkit.dto.res.AIChatResponse;
+
+public interface AIChatService {
+	AIChatResponse getChat(Authenticator auth, String chatId);
+	
+
+}

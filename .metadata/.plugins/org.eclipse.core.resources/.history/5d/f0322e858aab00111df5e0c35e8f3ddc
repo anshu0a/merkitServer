@@ -1,0 +1,11 @@
+package com.merkit.service;
+
+import java.util.List;
+
+import com.merkit.dto.req.ArticleRequest;
+import com.merkit.entity.Article;
+
+public interface ArticleService {
+	Boolean save(ArticleRequest art);
+	List<Article> getAllArticle();
+}

@@ -1,0 +1,28 @@
+package com.merkit.controller;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.merkit.dto.req.ArticleRequest;
+import com.merkit.dto.res.ApiResponse;
+import com.merkit.service.ArticleService;
+
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/article")
+public class ArticleController{
+	private final ArticleService articlesvs;
+	
+	@PostMapping("")
+	ApiResponse postArticle(@RequestBody ArticleRequest req , Authentication auth){
+		ApiResponse res = articlesvs.save(req, auth);
+		
+		return res;
+	}
+	
+}

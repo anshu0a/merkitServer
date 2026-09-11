@@ -1,0 +1,18 @@
+package com.merkit.service;
+
+import org.springframework.security.core.Authentication;
+
+import com.merkit.dto.req.AIRequest;
+import com.merkit.entity.AIChat;
+import com.merkit.entity.AIMessage;
+
+public interface AIChatService {
+	
+//	String getAnswer(String prompt);
+	AIChat getChat(Authentication auth, Long chatId);
+	AIChat addNewChat(AIRequest req, Authentication auth);
+	AIMessage addOldChat(AIRequest req, Authentication auth,Long chatId);
+	
+	
+
+}

@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Forgot Password Request</title>
+
+<style>
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	min-height: 100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f8fafc;
+	font-family: Arial, Helvetica, sans-serif;
+	color: #1f2937;
+}
+
+.container {
+	width: 100%;
+	max-width: 440px;
+	padding: 20px;
+}
+
+.card {
+	padding: 42px;
+	border-radius: 14px;
+}
+
+.icon {
+	width: 52px;
+	height: 52px;
+	margin: 0 auto 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	background: #f1f5f9;
+	font-size: 24px;
+}
+
+.title {
+	margin: 0;
+	text-align: center;
+	font-size: 26px;
+	font-weight: 600;
+}
+
+.description {
+	margin: 10px 0 30px;
+	text-align: center;
+	font-size: 14px;
+	line-height: 21px;
+	color: #64748b;
+}
+
+.form-group {
+	margin-bottom: 20px;
+}
+
+label {
+	display: block;
+	margin-bottom: 8px;
+	font-size: 13px;
+	font-weight: 600;
+	color: #374151;
+}
+
+.input-box {
+	position: relative;
+}
+
+input {
+	width: 100%;
+	height: 46px;
+	padding: 0 55px 0 13px;
+	border: 1px solid #d7dce2;
+	border-radius: 7px;
+	outline: none;
+	background: #ffffff;
+	color: #1f2937;
+	font-size: 14px;
+	transition: 0.2s;
+}
+
+input::placeholder {
+	color: #9ca3af;
+}
+
+input:focus {
+	border-color: #64748b;
+	box-shadow: 0 0 0 3px rgba(100, 116, 139, 0.10);
+}
+
+.toggle-password {
+	display: none;
+	position: absolute;
+	top: 50%;
+	right: 10px;
+	transform: translateY(-50%);
+	width: auto;
+	height: auto;
+	padding: 5px;
+	border: 0;
+	background: transparent;
+	color: #64748b;
+	font-size: 12px;
+	font-weight: 600;
+	cursor: pointer;
+}
+
+.toggle-password:hover {
+	color: #1f2937;
+}
+
+.error {
+	display: none;
+	margin-top: 7px;
+	font-size: 12px;
+	color: #dc2626;
+}
+
+.success {
+	display: none;
+	margin-top: 7px;
+	font-size: 12px;
+	color: #15803d;
+}
+
+.buttons {
+	margin-top: 28px;
+}
+
+.change-btn, .secure-btn {
+	width: 100%;
+	height: 46px;
+	border-radius: 7px;
+	font-size: 14px;
+	font-weight: 600;
+	cursor: pointer;
+	transition: 0.2s;
+}
+
+.change-btn {
+	border: 1px solid #1f2937;
+	background: #1f2937;
+	color: #ffffff;
+}
+
+.change-btn:hover {
+	background: #111827;
+}
+
+.secure-btn {
+	margin-top: 10px;
+	border: 1px solid #d7dce2;
+	background: #ffffff;
+	color: #374151;
+}
+
+.secure-btn:hover {
+	background: #f8fafc;
+	border-color: #b9c0c9;
+}
+
+.security-text {
+	margin-top: 24px;
+	padding-top: 18px;
+	border-top: 1px solid #edf0f2;
+	text-align: center;
+	font-size: 12px;
+	line-height: 18px;
+	color: #89919c;
+}
+
+@media ( max-width : 480px) {
+	.container {
+		padding: 15px;
+	}
+	.card {
+		padding: 30px 24px;
+	}
+	.title {
+		font-size: 24px;
+	}
+}
+</style>
+
+
+</head>
+
+<body>
+	<div class="container">
+		<div class="card">
+			<div class="icon">🔐</div>
+			<h1 class="title">Change Password</h1>
+			<p class="description">Create a new password for your account.
+				Your password must be more than 4 characters.</p>
+			<form id="passwordForm" method="post" th:action="@{/forgot/change(token=${token})}" >
+				<div class="form-group">
+					<label for="password"> New Password </label>
+					<div class="input-box">
+						<input type="password" id="password" name="password"
+							placeholder="Enter new password . . ."
+							autocomplete="new-password">
+						<button type="button" class="toggle-password" id="passwordToggle"
+							onclick="togglePassword('password', this)">Show</button>
+					</div>
+					<div class="error" id="passwordError"></div>
+				</div>
+				<div class="form-group">
+					<label for="confirmPassword"> Re-enter Password </label>
+					<div class="input-box">
+						<input type="password" id="confirmPassword" name="confirmPassword"
+							placeholder="Re-enter new password . . ."
+							autocomplete="new-password">
+						<button type="button" class="toggle-password"
+							id="confirmPasswordToggle"
+							onclick="togglePassword('confirmPassword', this)">Show</button>
+					</div>
+					<div class="error" id="confirmError"></div>
+					<div class="success" id="matchSuccess">Passwords match.</div>
+				</div>
+				<div class="buttons">
+					<button type="submit" class="change-btn">Change Password</button>
+					<a th:href="@{/forgot/secure(token=${token})}" class="secure-btn">
+						Secure Account </a>
+				</div>
+			</form>
+			<div class="security-text">For your security, choose a password
+				that you have not used on another website.</div>
+
+		</div>
+
+	</div>
+
+
+	<script>
+		const form = document.getElementById("passwordForm");
+		const password = document.getElementById("password");
+		const confirmPassword = document.getElementById("confirmPassword");
+		const passwordError = document.getElementById("passwordError");
+		const confirmError = document.getElementById("confirmError");
+		const matchSuccess = document.getElementById("matchSuccess");
+		const passwordToggle = document.getElementById("passwordToggle");
+		const confirmPasswordToggle = document
+				.getElementById("confirmPasswordToggle");
+
+		password.addEventListener("focus", function() {
+			passwordToggle.style.display = "block";
+		});
+
+		confirmPassword.addEventListener("focus", function() {
+			confirmPasswordToggle.style.display = "block";
+		});
+
+		password.addEventListener("blur", function() {
+			setTimeout(function() {
+				if (document.activeElement !== passwordToggle)
+					passwordToggle.style.display = "none";
+			}, 100);
+		});
+
+		confirmPassword.addEventListener("blur", function() {
+			setTimeout(function() {
+				if (document.activeElement !== confirmPasswordToggle)
+					confirmPasswordToggle.style.display = "none";
+			}, 100);
+		});
+
+		function togglePassword(inputId, button) {
+
+			const input = document.getElementById(inputId);
+			if (input.type === "password") {
+				input.type = "text";
+				button.textContent = "Hide";
+			} else {
+				input.type = "password";
+				button.textContent = "Show";
+			}
+
+		}
+
+		function validatePassword() {
+
+			passwordError.style.display = "none";
+
+			if (password.value.length === 0) {
+				passwordError.textContent = "Please enter a password.";
+				passwordError.style.display = "block";
+				return false;
+			}
+
+			if (password.value.length <= 4) {
+				passwordError.textContent = "Password must be more than 4 characters.";
+				passwordError.style.display = "block";
+				return false;
+			}
+			return true;
+
+		}
+
+		function validateConfirmPassword() {
+
+			confirmError.style.display = "none";
+			matchSuccess.style.display = "none";
+
+			if (confirmPassword.value.length === 0) {
+				confirmError.textContent = "Please re-enter your password.";
+				confirmError.style.display = "block";
+				return false;
+			}
+
+			if (password.value !== confirmPassword.value) {
+				confirmError.textContent = "Passwords do not match.";
+				confirmError.style.display = "block";
+				return false;
+			}
+
+			matchSuccess.style.display = "block";
+			return true;
+
+		}
+
+		password.addEventListener("input", function() {
+			validatePassword();
+			if (confirmPassword.value.length > 0)
+				validateConfirmPassword();
+		});
+
+		confirmPassword.addEventListener("input", function() {
+			validateConfirmPassword();
+		});
+
+		form.addEventListener("submit", function(event) {
+		    const passwordValid = validatePassword();
+		    const confirmValid = validateConfirmPassword();
+		    if (!passwordValid || !confirmValid) {
+		        event.preventDefault();
+		        return;
+		    }
+
+		});
+
+		
+	</script>
+
+
+</body>
+
+</html>

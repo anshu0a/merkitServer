@@ -1,0 +1,25 @@
+package com.merkit.service.impl;
+
+import java.util.List;
+
+import com.merkit.dto.req.ArticleRequest;
+import com.merkit.entity.Article;
+import com.merkit.service.ArticleService;
+
+public class ArticleServiceImpl implements ArticleService {
+
+	@Override
+	public Boolean save(ArticleRequest art) {
+		Article article = Article.builder()
+		.article(art.getArticle())
+		.build();
+		return null;
+	}
+
+	@Override
+	public List<Article> getAllArticle() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

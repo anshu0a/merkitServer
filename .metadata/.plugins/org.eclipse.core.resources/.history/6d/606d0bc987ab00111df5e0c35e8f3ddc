@@ -1,0 +1,13 @@
+package com.merkit.repo;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.merkit.entity.LoginHistory;
+
+public interface ArticleRepository extends JpaRepository<LoginHistory, Long> {
+
+    List<LoginHistory> findByUserId(Long userId);
+
+}

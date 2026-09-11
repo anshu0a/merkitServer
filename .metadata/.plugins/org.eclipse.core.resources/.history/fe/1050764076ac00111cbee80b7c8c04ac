@@ -1,0 +1,9 @@
+package com.merkit.service;
+
+import com.merkit.entity.AIMessage;
+
+public interface AIMessageService {
+
+	AIMessage createMessage(String prompt); 
+
+}

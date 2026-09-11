@@ -1,0 +1,328 @@
+package com.merkit.security;
+
+import java.io.IOException;
+
+
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.merkit.entity.User;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+
+@Component
+@RequiredArgsConstructor
+public class JwtFilter extends OncePerRequestFilter {
+
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
+
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
+            throws ServletException, IOException {
+
+        String path = request.getServletPath();
+        String method = request.getMethod();
+
+        System.out.println();
+        System.out.println("========== JWT FILTER ==========");
+        System.out.println("METHOD : " + method);
+        System.out.println("PATH   : " + path);
+
+        if ("OPTIONS".equalsIgnoreCase(method)) {
+            System.out.println("OPTIONS REQUEST - SKIPPED");
+            System.out.println("================================");
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (path.equals("/auth/login")
+                || path.equals("/auth/register")
+                || path.equals("/auth/refresh-token")
+                || path.equals("/auth/logout")
+                || path.equals("/auth/forgot")
+                || path.equals("/auth/forgot-password")
+                || path.equals("/forgot/reset")
+                || path.equals("/forgot/change")
+                || path.equals("/forgot/secure")
+                || path.equals("/error")) {
+
+            System.out.println("PUBLIC ENDPOINT - JWT SKIPPED");
+            System.out.println("================================");
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String authHeader = request.getHeader("Authorization");
+
+        System.out.println("AUTH HEADER: " + authHeader);
+
+        if (authHeader == null || authHeader.isBlank()) {
+
+            System.out.println(
+                    "JWT ERROR: Authorization header is missing"
+            );
+
+            System.out.println("================================");
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        if (!authHeader.startsWith("Bearer ")) {
+
+            System.out.println(
+                    "JWT ERROR: Authorization header does not start with Bearer"
+            );
+
+            System.out.println("================================");
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = authHeader.substring(7);
+
+        if (token.isBlank()) {
+
+            System.out.println(
+                    "JWT ERROR: Token is empty"
+            );
+
+            System.out.println("================================");
+
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        System.out.println(
+                "TOKEN RECEIVED: "
+                        + token.substring(
+                                0,
+                                Math.min(token.length(), 30)
+                        )
+                        + "..."
+        );
+
+        try {
+
+            String username = jwtUtil.extractUsername(token);
+
+            System.out.println(
+                    "USERNAME FROM TOKEN: " + username
+            );
+
+            if (username == null || username.isBlank()) {
+
+                System.out.println(
+                        "JWT ERROR: Username could not be extracted"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (SecurityContextHolder
+                    .getContext()
+                    .getAuthentication() != null) {
+
+                System.out.println(
+                        "SECURITY CONTEXT ALREADY AUTHENTICATED"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            UserDetails userDetails =
+                    userDetailsService
+                            .loadUserByUsername(username);
+
+            if (userDetails == null) {
+
+                System.out.println(
+                        "JWT ERROR: UserDetails is null"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            System.out.println(
+                    "USER FOUND: "
+                            + userDetails.getUsername()
+            );
+
+            boolean validToken =
+                    jwtUtil.validateToken(
+                            token,
+                            userDetails
+                    );
+
+            System.out.println(
+                    "TOKEN VALID: " + validToken
+            );
+
+            if (!validToken) {
+
+                System.out.println(
+                        "JWT ERROR: Token validation failed"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            User user =
+                    ((CustomUserDetails) userDetails)
+                            .getUser();
+
+            if (user == null) {
+
+                System.out.println(
+                        "JWT ERROR: User object is null"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            Long tokenVersion =
+                    jwtUtil.extractTokenVersion(token);
+
+            Long currentTokenVersion =
+                    user.getTokenVersion();
+
+            System.out.println(
+                    "TOKEN VERSION: " + tokenVersion
+            );
+
+            System.out.println(
+                    "DB TOKEN VERSION: "
+                            + currentTokenVersion
+            );
+
+            if (tokenVersion == null) {
+
+                System.out.println(
+                        "JWT ERROR: Token version is missing from JWT"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (currentTokenVersion == null) {
+
+                System.out.println(
+                        "JWT ERROR: User token version is null"
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            if (!tokenVersion.equals(currentTokenVersion)) {
+
+                System.out.println(
+                        "JWT ERROR: Token version mismatch"
+                );
+
+                System.out.println(
+                        "JWT VERSION: "
+                                + tokenVersion
+                                + " | DB VERSION: "
+                                + currentTokenVersion
+                );
+
+                System.out.println("================================");
+
+                filterChain.doFilter(request, response);
+                return;
+            }
+
+            UsernamePasswordAuthenticationToken authentication =
+                    new UsernamePasswordAuthenticationToken(
+                            userDetails,
+                            null,
+                            userDetails.getAuthorities()
+                    );
+
+            authentication.setDetails(
+                    new WebAuthenticationDetailsSource()
+                            .buildDetails(request)
+            );
+
+            SecurityContextHolder
+                    .getContext()
+                    .setAuthentication(authentication);
+
+            System.out.println(
+                    "JWT SUCCESS: USER AUTHENTICATED"
+            );
+
+            System.out.println(
+                    "AUTHENTICATED USER: "
+                            + username
+            );
+
+            System.out.println(
+                    "AUTHORITIES: "
+                            + userDetails.getAuthorities()
+            );
+
+        } catch (Exception e) {
+
+            System.out.println();
+            System.out.println(
+                    "========== JWT EXCEPTION =========="
+            );
+
+            System.out.println(
+                    "TYPE: "
+                            + e.getClass().getName()
+            );
+
+            System.out.println(
+                    "MESSAGE: "
+                            + e.getMessage()
+            );
+
+            e.printStackTrace();
+
+            SecurityContextHolder.clearContext();
+
+        }
+
+        System.out.println("================================");
+
+        filterChain.doFilter(request, response);
+    }
+}

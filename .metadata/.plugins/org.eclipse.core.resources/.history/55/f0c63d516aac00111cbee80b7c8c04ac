@@ -1,0 +1,13 @@
+package com.merkit.service;
+
+import org.springframework.security.core.Authentication;
+
+import com.merkit.dto.res.AIChatResponse;
+
+public interface AIChatService {
+	
+	AIChatResponse getChat(Authentication auth, String chatId);
+	
+	
+
+}

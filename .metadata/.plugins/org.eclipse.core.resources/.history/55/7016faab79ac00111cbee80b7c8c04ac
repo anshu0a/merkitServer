@@ -1,0 +1,134 @@
+package com.merkit.controller;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.merkit.dto.req.AIRequest;
+import com.merkit.dto.res.AIChatResponse;
+import com.merkit.entity.AIChat;
+import com.merkit.service.AIChatService;
+
+import lombok.RequiredArgsConstructor;
+
+@RestController
+@RequestMapping("/aichat")
+@RequiredArgsConstructor
+public class AIController {
+
+	private final AIChatService aIChatService;
+
+	@GetMapping
+	public ResponseEntity<List<AIChat>> getAllChat(Authentication auth) {
+
+//        return ResponseEntity.ok(svs.getAllChat(auth));
+		return null;
+	}
+
+	@GetMapping("/{chatId}")
+	public ResponseEntity<AIChat> getChat(Authentication auth, @PathVariable Long chatId) {
+
+//        return ResponseEntity.ok(svs.getChat(auth, chatId));
+		return null;
+	}
+
+	@PostMapping
+	public ResponseEntity<AIChat> addNewChat(@RequestBody AIRequest req, Authentication auth) {
+
+        return ResponseEntity.ok(aIChatService.addNewChat(req, auth));
+		
+	}
+
+	@PostMapping("/{chatId}")
+	public ResponseEntity<AIChat> addOldChat(@RequestBody AIRequest req, Authentication auth,
+			@PathVariable Long chatId) {
+
+//        return ResponseEntity.ok(svs.addOldChat(req, auth, chatId));
+		return null;
+	}
+
+	@PutMapping("/{chatId}")
+	public ResponseEntity<AIChat> saveChat(Authentication auth, @PathVariable Long chatId) {
+
+//        return ResponseEntity.ok(svs.saveChat(auth, chatId));
+		return null;
+	}
+}
+
+//	@GetMapping("/check")
+//	public ResponseEntity<String> check() throws Exception {
+//		ResponseEntity<String> re = new ResponseEntity<>("hello from backend", HttpStatus.OK);
+//		return re;
+//	}
+
+//	@GetMapping("/chatlist")
+//	public ResponseEntity<Page<AIChat>> getChat(
+//			@PageableDefault(page = 0, size = 10, sort = "chatId", direction = Sort.Direction.DESC) Pageable pageable
+//			Authentication auth )throws Exception {
+//
+//		Page<Chat_Messages> page = svs.getAllMessage(pageable);
+//
+//		return new ResponseEntity<Page<AIChat>>(page, HttpStatus.OK);
+//	}
+//
+//	@PostMapping("/ask")
+//	public ResponseEntity<?> askAI(@RequestBody AIRequest req) {
+//
+//		try {
+//			
+//			System.out.println("KEY = " + apiKey);
+//
+//			String prompt = req.getPrompt();
+//			String url =  "https://api.groq.com/openai/v1/chat/completions";
+//	        ObjectMapper mapper = new ObjectMapper();
+//	        ObjectNode root = mapper.createObjectNode();
+//	        root.put("model", "llama-3.1-8b-instant");
+//	        ArrayNode messages = mapper.createArrayNode();
+//	        ObjectNode userMessage = mapper.createObjectNode();
+//
+//	        userMessage.put("role", "user");
+//	        userMessage.put("content", prompt);
+//
+//	        messages.add(userMessage);
+//	        root.set("messages", messages);
+//	        String body = mapper.writeValueAsString(root);
+//	        HttpClient client = HttpClient.newHttpClient();
+//	        
+//	        HttpRequest request = HttpRequest.newBuilder()
+//	                .uri(URI.create(url))
+//	                .header("Content-Type", "application/json")
+//	                .header("Authorization", "Bearer " + apiKey)
+//	                .POST(HttpRequest.BodyPublishers.ofString(body))
+//	                .build();
+//
+//	        HttpResponse<String> response =client.send(request,HttpResponse.BodyHandlers.ofString());
+//	        System.out.println(response.body());
+//	        JsonNode json =mapper.readTree(response.body());
+//	        String answer = json
+//	                .path("choices")
+//	                .path(0)
+//	                .path("message")
+//	                .path("content")
+//	                .asText();
+//			//String answer = AI.ask(prompt, apiKey);
+//
+//			if (answer == null || answer.isBlank()) return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("AI did not return answer");
+//
+//			Chat_Messages msg = new Chat_Messages(prompt, answer);
+//			Chat_Messages saved = svs.addMessage(msg);
+//
+//			return ResponseEntity.ok(saved);
+//
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error : " + e.getMessage());
+//		}
+//	}

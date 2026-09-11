@@ -1,0 +1,8 @@
+package com.merkit.service;
+
+public interface MessageService {
+
+//	public Chat_Messages addMessage(Chat_Messages msg);
+//	public Page<Chat_Messages> getAllMessage(Pageable pageable);
+
+}

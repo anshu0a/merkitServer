@@ -1,0 +1,23 @@
+package com.merkit.service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+
+import com.merkit.dto.req.AIRequest;
+import com.merkit.dto.res.AIChatList;
+import com.merkit.dto.res.AINewChatResponse;
+import com.merkit.dto.res.ApiResponse;
+import com.merkit.entity.AIChat;
+import com.merkit.entity.AIMessage;
+
+public interface AIChatService {
+	
+	AIChat getChat(Authentication auth, Long chatId);
+	AINewChatResponse addNewChat(AIRequest req, Authentication auth);
+	AIMessage addOldChat(AIRequest req, Authentication auth,Long chatId);
+	ApiResponse saveChat(Authentication auth,Long chatId ,Boolean save);
+	Page<AIChatList> getAllChat(Authentication auth, Pageable pageable);
+	ApiResponse deleteOneChat(Authentication auth,Long id);
+
+}

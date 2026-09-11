@@ -1,0 +1,201 @@
+package com.merkit.service.impl;
+
+import java.awt.print.Pageable;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.merkit.dto.req.AIRequest;
+import com.merkit.dto.res.AIChatList;
+import com.merkit.dto.res.ApiResponse;
+import com.merkit.entity.AIChat;
+import com.merkit.entity.AIMessage;
+import com.merkit.entity.User;
+import com.merkit.repo.AIChatRepository;
+import com.merkit.repo.AIMessageRepository;
+import com.merkit.repo.UserRepository;
+import com.merkit.service.AIChatService;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class AIChatServiceImpl implements AIChatService {
+
+	@Value("${grok.api-key}")
+	private String apiKey;
+	@Value("${grok.url}")
+	private String grokUrl;
+	@Value("${grok.model}")
+	private String grokModel;
+
+	private final UserRepository userRepository;
+	private final AIChatRepository aiChatRepository;
+	private final AIMessageRepository aiMessageRepository;
+
+	@Override
+	public AIChat getChat(Authentication auth, Long chatId) {
+
+		String username = auth.getName();
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+		AIChat chat = aiChatRepository.findBychatIdAndUser(chatId, user)
+				.orElseThrow(() -> new RuntimeException("AI chat not found with Id: " + chatId));
+
+		return chat;
+	}
+
+	@Override
+	@Transactional
+	public AIChat addNewChat(AIRequest req, Authentication auth) {
+
+		String username = auth.getName();
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+
+		String question = req.getPrompt();
+		String answer = getAnswer(question);
+		String topic = getAnswer(
+				"'" + question + "' -> give one short topic name for this question. Return only the topic name.");
+
+		AIChat chat = AIChat.builder().chatName(topic).user(user).build();
+
+		AIMessage msg = new AIMessage();
+		msg.setQuestion(question);
+		msg.setAnswer(answer);
+		msg.setChat(chat);
+
+		chat.getMessages().add(msg);
+
+		return aiChatRepository.save(chat);
+	}
+
+	@Override
+	@Transactional
+	public AIMessage addOldChat(AIRequest req, Authentication auth, Long chatId) {
+		String username = auth.getName();
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+		AIChat chat = aiChatRepository.findBychatIdAndUser(chatId, user)
+				.orElseThrow(() -> new RuntimeException("AI chat not found with Id: " + chatId));
+
+		String question = req.getPrompt();
+		String answer = getAnswer(question);
+
+		AIMessage msg = new AIMessage();
+		msg.setQuestion(question);
+		msg.setAnswer(answer);
+		msg.setChat(chat);
+
+		chat.getMessages().add(msg);
+		aiChatRepository.save(chat);
+
+		return aiMessageRepository.save(msg);
+	}
+
+	@Override
+	public ApiResponse saveChat(Authentication auth, Long chatId, Boolean sv) {
+
+		String username = auth.getName();
+		User user = userRepository.findByUsername(username)
+				.orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
+		AIChat chat = aiChatRepository.findBychatIdAndUser(chatId, user)
+				.orElseThrow(() -> new RuntimeException("AI chat not found with Id: " + chatId));
+
+		chat.setSaved(sv);
+		aiChatRepository.save(chat);
+
+		return ApiResponse.builder().statusCode(200).success(true).message("Chat saved successfully.").build();
+	}
+
+	@Override
+	public Page<AIChatList> getAllChat(Authentication auth, Pageable pageable) {
+
+	    String username = auth.getName();
+
+	    User user = userRepository.findByUsername(username)
+	            .orElseThrow(() -> new UsernameNotFoundException(
+	                    "User not found with username: " + username));
+
+	    Page<AIChat> chats = aiChatRepository.findAllByUser(user, pageable);
+
+	    return chats.map(x -> AIChatList.builder()
+	            .name(x.getChatName())
+	            .chatId(x.getChatId())
+	            .question(x.getMessages().size())
+	            .dateStamp(x.getCreated_at())
+	            .build());
+	}
+
+//---------------------------------[ private methods ]------------------------------------------------------
+
+	private String getAnswer(String prompt) {
+
+	    try {
+
+	        String url = grokUrl;
+
+	        ObjectMapper mapper = new ObjectMapper();
+	        ObjectNode root = mapper.createObjectNode();
+
+	        root.put("model", grokModel);
+	        root.put("include_reasoning", false);
+
+	        ArrayNode messages = mapper.createArrayNode();
+
+	        ObjectNode userMessage = mapper.createObjectNode();
+	        userMessage.put("role", "user");
+	        userMessage.put("content", prompt);
+
+	        messages.add(userMessage);
+	        root.set("messages", messages);
+
+	        String body = mapper.writeValueAsString(root);
+
+	        HttpClient client = HttpClient.newHttpClient();
+
+	        HttpRequest request = HttpRequest.newBuilder()
+	                .uri(URI.create(url))
+	                .header("Content-Type", "application/json")
+	                .header("Authorization", "Bearer " + apiKey)
+	                .POST(HttpRequest.BodyPublishers.ofString(body))
+	                .build();
+
+	        HttpResponse<String> response = client.send( request, HttpResponse.BodyHandlers.ofString()  );
+
+	        if (response.statusCode() < 200 || response.statusCode() >= 300) throw new RuntimeException("Groq API error: " + response.body());
+	        
+	        JsonNode json = mapper.readTree(response.body());
+
+	        String answer = json
+	                .path("choices")
+	                .path(0)
+	                .path("message")
+	                .path("content")
+	                .asText();
+
+	        if (answer == null || answer.isBlank()) {
+	            throw new RuntimeException("AI did not return answer because answer is empty");
+	        }
+
+	        return answer;
+
+	    } catch (IOException | InterruptedException e) {
+	        throw new RuntimeException(e.getMessage());
+	    }
+	}
+	
+}
