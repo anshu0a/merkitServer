@@ -25,38 +25,6 @@ screenshot/
 └── notfound.png
 ```
 
-### 🏠 Home
-
-![Merkit Home](screenshot/home.png)
-
-### ✍️ Digital Create
-
-![Article](screenshot/create1.png)
-
-![Prediction](screenshot/create2.png)
-
-### 🗺️ Capsule Map
-
-![Capsule Map](screenshot/map.png)
-
-### 📅 Calendar
-
-![Timeline](screenshot/date.png)
-
-### 🤖 AI Chatbot
-
-![AI Chatbot](screenshot/bot1.png)
-
-![Chat History](screenshot/bot2.png)
-
-![Language Selection](screenshot/bot3.png)
-
-### ❌ Not Found
-
-![404](screenshot/notfound.png)
-
----
-
 # ✨ Features
 
 ## 🏠 Home
