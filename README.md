@@ -8,6 +8,42 @@ The application allows users to share their thoughts through posts and articles,
 
 ---
 
+# 📸 Screenshots
+
+Add your project screenshots inside the `screenshots` folder.
+
+```text
+screenshots/
+├── home.png
+├── capsule.png
+├── map.png
+└── chatbot.png
+```
+
+Then reference them in this README:
+
+```markdown
+## 📸 Screenshots
+
+### Home
+
+![Merkit Home](screenshots/home.png)
+
+### Digital Time Capsule
+
+![Digital Time Capsule](screenshots/capsule.png)
+
+### Capsule Map
+
+![Capsule Map](screenshots/map.png)
+
+### AI Chatbot
+
+![AI Chatbot](screenshots/chatbot.png)
+```
+
+---
+
 ## ✨ Features
 
 ### 🏠 Home
@@ -454,7 +490,9 @@ User
       │
       ├── Profile
       └── Notifications
+```
 
+---
 
 # 🔮 Future Improvements
 
