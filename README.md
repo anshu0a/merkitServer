@@ -10,106 +10,110 @@ The application allows users to share their thoughts through posts and articles,
 
 # 📸 Screenshots
 
-Add your project screenshots inside the `screenshots` folder.
+The project screenshots are available in the `screenshot` folder.
 
 ```text
-screenshots/
+screenshot/
 ├── home.png
-├── capsule.png
+├── create1.png
+├── create2.png
 ├── map.png
-└── chatbot.png
+├── date.png
+├── bot1.png
+├── bot2.png
+├── bot3.png
+└── notfound.png
 ```
 
-Then reference them in this README:
-
-# 📸 Screenshots
-
-### Home
+### 🏠 Home
 
 ![Merkit Home](screenshot/home.png)
 
-### Digital Create
+### ✍️ Digital Create
 
 ![Article](screenshot/create1.png)
+
 ![Prediction](screenshot/create2.png)
 
-### Capsule Map
+### 🗺️ Capsule Map
 
 ![Capsule Map](screenshot/map.png)
 
-### Calendar
+### 📅 Calendar
 
 ![Timeline](screenshot/date.png)
 
-### AI Chatbot
+### 🤖 AI Chatbot
 
 ![AI Chatbot](screenshot/bot1.png)
-![History](screenshot/bot2.png)
-![Language](screenshot/bot3.png)
 
-### Not Found
+![Chat History](screenshot/bot2.png)
+
+![Language Selection](screenshot/bot3.png)
+
+### ❌ Not Found
 
 ![404](screenshot/notfound.png)
 
 ---
 
-## ✨ Features
+# ✨ Features
 
-### 🏠 Home
+## 🏠 Home
 
 The Home section provides a central feed where users can discover different types of content.
 
-* **All Article Feed**
+### 📰 All Article Feed
 
-  * Discover articles shared by users
-  * Read detailed stories and information
-  * Explore article content
+- Discover articles shared by users
+- Read detailed stories and information
+- Explore article content
 
-* **All Post Feed**
+### 📱 All Post Feed
 
-  * View posts shared by users
-  * Discover new content
-  * Interact with posts
+- View posts shared by users
+- Discover new content
+- Interact with posts
 
-* **All Capsule Feed**
+### ⏳ All Capsule Feed
 
-  * Discover digital time capsules
-  * Explore memories created by users
-  * Find preserved moments
+- Discover digital time capsules
+- Explore memories created by users
+- Find preserved moments
 
-* **All Trending**
+### 🔥 All Trending
 
-  * Discover trending content
-  * Explore popular posts, articles, and capsules
+- Discover trending content
+- Explore popular posts, articles, and capsules
 
 ---
 
-## ✍️ Create
+# ✍️ Create
 
 The Create section allows users to create different types of content.
 
-### 📝 Create Article
+## 📝 Create Article
 
 Users can create and publish detailed articles.
 
-* Add article title
-* Write article content
-* Add tags
-* Upload images
-* Publish immediately
-* Schedule for later
+- Add article title
+- Write article content
+- Add tags
+- Upload images
+- Publish immediately
+- Schedule for later
 
-### 📱 Create Post
+## 📱 Create Post
 
 Users can share their thoughts and moments through posts.
 
-* Create a post
-* Add content
-* Share images
-* Publish content
-* Share moments with other users
+- Create a post
+- Add content
+- Share images
+- Publish content
+- Share moments with other users
 
-### ⏳ Plant Capsule
+## ⏳ Plant Capsule
 
 **Digital Time Capsule** is one of the main features of Merkit.
 
@@ -117,17 +121,17 @@ Users can plant a digital capsule containing a memory, message, image, or other 
 
 Features include:
 
-* Create a digital time capsule
-* Add a personal message
-* Attach images/files
-* Set capsule information
-* Associate capsules with locations
-* Discover capsules through the capsule feed
-* Find capsules through search
-* Explore capsules on the map
-* Preserve memories for the future
+- Create a digital time capsule
+- Add a personal message
+- Attach images/files
+- Set capsule information
+- Associate capsules with locations
+- Discover capsules through the capsule feed
+- Find capsules through search
+- Explore capsules on the map
+- Preserve memories for the future
 
-### 🌎 Capsule Discovery
+## 🌎 Capsule Discovery
 
 Merkit provides multiple ways to discover digital time capsules:
 
@@ -147,71 +151,71 @@ This allows memories to be discovered not only through the normal feed but also 
 
 ---
 
-## 🤖 Bot
+# 🤖 Bot
 
 Merkit includes an AI-powered chatbot that allows users to interact with an AI assistant.
 
-### 💬 Chat
+## 💬 Chat
 
 Users can:
 
-* Ask questions
-* Get AI-generated responses
-* Start new conversations
-* Continue conversations
-* Use Markdown-supported responses
+- Ask questions
+- Get AI-generated responses
+- Start new conversations
+- Continue conversations
+- Use Markdown-supported responses
 
-### 🕘 Chat History
+## 🕘 Chat History
 
 Previous conversations can be accessed through chat history.
 
 Users can:
 
-* View previous conversations
-* Open existing chats
-* Continue conversations
-* Manage their conversations
+- View previous conversations
+- Open existing chats
+- Continue conversations
+- Manage their conversations
 
-### ⭐ Save Chat
+## ⭐ Save Chat
 
 Important conversations can be saved for future reference.
 
 Saved chats can be kept separately from temporary conversations.
 
-### 🗑️ Delete Chat
+## 🗑️ Delete Chat
 
 Users can delete conversations they no longer need.
 
 ---
 
-## 🔔 Notification
+# 🔔 Notification
 
 The Notification section keeps users informed about activity within Merkit.
 
 It can be used for:
 
-* New interactions
-* Content activity
-* Capsule-related updates
-* Application notifications
+- New interactions
+- Content activity
+- Capsule-related updates
+- Application notifications
 
 ---
 
-## 👤 Profile
+# 👤 Profile
 
 The Profile section provides a personal space for each user.
 
 Users can:
 
-* View profile information
-* Manage their account
-* View their content
-* Access their capsules
-* View their activity
+- View profile information
+- Manage their account
+- View their content
+- Access their capsules
+- View their activity
 
 ---
 
-## ⚙️ More
+# ⚙️ More
 
 The More section provides additional application features and settings.
 
@@ -255,38 +259,38 @@ Merkit
 
 The Merkit backend is built using **Spring Boot**.
 
-* Java
-* Spring Boot
-* Spring Web
-* Spring Data JPA
-* Spring Security
-* Hibernate
-* REST APIs
-* JWT Authentication
-* MySQL
+- Java
+- Spring Boot
+- Spring Web
+- Spring Data JPA
+- Spring Security
+- Hibernate
+- REST APIs
+- JWT Authentication
+- MySQL
 
 ## Frontend
 
-* React.js
-* Vite
-* JavaScript
-* HTML5
-* CSS3
-* React Router
-* Axios
-* React Markdown
+- React.js
+- Vite
+- JavaScript
+- HTML5
+- CSS3
+- React Router
+- Axios
+- React Markdown
 
 ## Database
 
-* MySQL
+- MySQL
 
 ## Other Technologies
 
-* Cloudinary
-* MapLibre GL
-* OpenFreeMap
-* Git
-* GitHub
+- Cloudinary
+- MapLibre GL
+- OpenFreeMap
+- Git
+- GitHub
 
 ---
 
@@ -296,16 +300,16 @@ Merkit uses secure authentication to protect user accounts and application resou
 
 Authentication features include:
 
-* User Registration
-* User Login
-* JWT Authentication
-* Access Token
-* Refresh Token
-* Forgot Password
-* OTP Verification
-* Password Reset
-* Protected APIs
-* User-based authorization
+- User Registration
+- User Login
+- JWT Authentication
+- Access Token
+- Refresh Token
+- Forgot Password
+- OTP Verification
+- Password Reset
+- Protected APIs
+- User-based authorization
 
 ---
 
@@ -353,18 +357,18 @@ Merkit uses **MySQL** as its primary database.
 
 The database stores information related to:
 
-* Users
-* Roles
-* Posts
-* Articles
-* Capsules
-* Locations
-* AI Chats
-* AI Messages
-* Notifications
-* Authentication
-* Password Reset
-* Refresh Tokens
+- Users
+- Roles
+- Posts
+- Articles
+- Capsules
+- Locations
+- AI Chats
+- AI Messages
+- Notifications
+- Authentication
+- Password Reset
+- Refresh Tokens
 
 ---
 
@@ -409,9 +413,9 @@ A capsule can represent a memory that is connected to a particular **time and pl
 
 Users can create capsules and later discover them through:
 
-* Capsule Feed
-* Search
-* Map
+- Capsule Feed
+- Search
+- Map
 
 This makes Merkit more than a simple content-sharing platform by connecting digital memories with their context.
 
@@ -507,14 +511,14 @@ User
 
 Possible future improvements include:
 
-* Enhanced capsule discovery
-* More interactive map features
-* Advanced AI capabilities
-* More games
-* Improved notifications
-* Social interactions
-* More personalization options
-* Additional memory and capsule features
+- Enhanced capsule discovery
+- More interactive map features
+- Advanced AI capabilities
+- More games
+- Improved notifications
+- Social interactions
+- More personalization options
+- Additional memory and capsule features
 
 ---
 
@@ -524,7 +528,7 @@ Possible future improvements include:
 
 Java Full Stack Developer
 
-**Technologies**
+### Technologies
 
 ```text
 Java
