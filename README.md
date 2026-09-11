@@ -22,36 +22,34 @@ screenshots/
 
 Then reference them in this README:
 
-```markdown
-## 📸 Screenshots
+# 📸 Screenshots
 
 ### Home
 
-![Merkit Home](screenshot/home.png)
+![Merkit Home](screenshots/home.png)
 
-### Digital Create 
+### Digital Create
 
-![Article](screenshot/create1.png)
-![Prectction](screenshot/create2.png)
+![Article](screenshots/create1.png)
+![Prediction](screenshots/create2.png)
 
 ### Capsule Map
 
-![Capsule Map](screenshot/map.png)
+![Capsule Map](screenshots/map.png)
 
 ### Calendar
 
-![Timeline](screenshot/date.png)
+![Timeline](screenshots/date.png)
 
 ### AI Chatbot
 
-![AI Chatbot](screenshot/bot1.png)
-![History](screenshot/bot2.png)
-![Language](screenshot/bot3.png)
+![AI Chatbot](screenshots/bot1.png)
+![History](screenshots/bot2.png)
+![Language](screenshots/bot3.png)
 
 ### Not Found
 
-![404](screenshot/notfound.png)
-```
+![404](screenshots/notfound.png)
 
 ---
 
