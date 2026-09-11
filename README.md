@@ -27,19 +27,30 @@ Then reference them in this README:
 
 ### Home
 
-![Merkit Home](screenshots/home.png)
+![Merkit Home](screenshot/home.png)
 
-### Digital Time Capsule
+### Digital Create 
 
-![Digital Time Capsule](screenshots/capsule.png)
+![Article](screenshot/create1.png)
+![Prectction](screenshot/create2.png)
 
 ### Capsule Map
 
-![Capsule Map](screenshots/map.png)
+![Capsule Map](screenshot/map.png)
+
+### Calendar
+
+![Timeline](screenshot/date.png)
 
 ### AI Chatbot
 
-![AI Chatbot](screenshots/chatbot.png)
+![AI Chatbot](screenshot/bot1.png)
+![History](screenshot/bot2.png)
+![Language](screenshot/bot3.png)
+
+### Not Found
+
+![404](screenshot/notfound.png)
 ```
 
 ---
