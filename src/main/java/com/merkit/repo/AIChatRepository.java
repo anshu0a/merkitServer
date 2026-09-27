@@ -1,0 +1,20 @@
+package com.merkit.repo;
+
+import org.springframework.data.domain.Pageable;
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.merkit.entity.AIChat;
+import com.merkit.entity.User;
+
+public interface AIChatRepository extends JpaRepository<AIChat, Long> {
+	
+	Optional<AIChat> findBychatIdAndUser(Long id , User user);
+
+	Page<AIChat> findAllByUser(User user, Pageable pageable);
+	
+	void deleteBychatIdAndUser(Long id , User user);
+
+}

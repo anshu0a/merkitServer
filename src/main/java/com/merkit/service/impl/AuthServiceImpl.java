@@ -1,0 +1,257 @@
+
+package com.merkit.service.impl;
+
+import java.io.UnsupportedEncodingException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.merkit.dto.req.ChangeForgotPassword;
+import com.merkit.dto.req.ChangePasswordRequest;
+import com.merkit.dto.req.ForgotPasswordRequest;
+import com.merkit.dto.req.LoginRequest;
+import com.merkit.dto.req.RefreshTokenRequest;
+import com.merkit.dto.req.RegisterRequest;
+import com.merkit.dto.res.ApiResponse;
+import com.merkit.dto.res.LoginResponse;
+import com.merkit.dto.res.TokenResponse;
+import com.merkit.entity.PasswordResetToken;
+import com.merkit.entity.RefreshToken;
+import com.merkit.entity.Role;
+import com.merkit.entity.User;
+import com.merkit.entity.UserRole;
+import com.merkit.enums.UserStatus;
+import com.merkit.exception.DuplicateUserException;
+import com.merkit.mapper.UserMapper;
+import com.merkit.repo.PasswordResetTokenRepository;
+import com.merkit.repo.RoleRepository;
+import com.merkit.repo.UserRepository;
+import com.merkit.security.CustomUserDetails;
+import com.merkit.security.JwtUtil;
+import com.merkit.service.AuthService;
+import com.merkit.service.RefreshTokenService;
+
+import jakarta.mail.MessagingException;
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class AuthServiceImpl implements AuthService {
+
+	@Value("${back_end}")
+	private String back_end;
+	private final UserRepository userRepository;
+	private final RoleRepository roleRepository;
+	private final PasswordEncoder passwordEncoder;
+	private final UserMapper userMapper;
+	private final AuthenticationManager authenticationManager;
+	private final JwtUtil jwtUtil;
+	private final RefreshTokenService refreshTokenService;
+	private final PasswordResetTokenRepository passwordResetTokenRepository;
+	private final EmailService emailService;
+
+	@Override
+	@Transactional
+	public LoginResponse register(RegisterRequest request) {
+
+		if (userRepository.existsByUsername(request.getUsername())) {
+			throw new DuplicateUserException("Account already exist this with username.");
+		}
+
+		if (userRepository.existsByEmail(request.getEmail())) {
+			throw new DuplicateUserException("Account already exist this with email.");
+		}
+
+		if (!request.getPassword().equals(request.getConfirmPassword())) {
+
+			throw new IllegalArgumentException("Password and Confirm Password do not match.");
+		}
+
+		Role role = roleRepository.findByRoleName("USER")
+				.orElseThrow(() -> new RuntimeException("USER role not found."));
+
+		User user = userMapper.toEntity(request);
+
+		user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+		user.setEnabled(true);
+		user.setEmailVerified(true);
+		user.setMobileVerified(false);
+				
+		user.setStatus(UserStatus.ACTIVE);
+		user.setCreatedAt(LocalDateTime.now());
+
+		UserRole userRole = UserRole.builder().user(user).role(role).build();
+
+		user.setUserRoles(List.of(userRole));
+
+		user = userRepository.save(user);
+
+		return login(new LoginRequest(request.getUsername(), request.getPassword()));
+	}
+
+	@Override
+	@Transactional
+	public LoginResponse login(LoginRequest request) {
+
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+
+		CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+
+		User user = userDetails.getUser();
+
+		String accessToken = jwtUtil.generateAccessToken(userDetails);
+
+		RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
+
+		TokenResponse tokenResponse = TokenResponse.builder().accessToken(accessToken)
+				.refreshToken(refreshToken.getRefreshToken()).tokenType("Bearer")
+				.expiresIn(jwtUtil.getAccessTokenExpiration()).build();
+
+		return LoginResponse.builder().success(true).message("Login successful").token(tokenResponse)
+				.user(userMapper.toResponse(user)).build();
+	}
+
+	@Override
+	@Transactional
+	public TokenResponse refreshToken(RefreshTokenRequest request) throws UsernameNotFoundException {
+
+		String token = request.getRefreshToken();
+
+		if (token == null || token.isBlank()) {
+			throw new RuntimeException("Refresh token is required");
+		}
+
+		RefreshToken refreshToken = refreshTokenService.verifyRefreshToken(token);
+
+		User user = refreshToken.getUser();
+
+		UserDetails userDetails = new CustomUserDetails(user);
+
+		String accessToken = jwtUtil.generateAccessToken(userDetails);
+
+		return TokenResponse.builder().accessToken(accessToken).refreshToken(refreshToken.getRefreshToken())
+				.tokenType("Bearer").expiresIn(jwtUtil.getAccessTokenExpiration()).build();
+	}
+
+	@Override
+	@Transactional
+	public ApiResponse logout(String refreshToken) {
+
+		if (refreshToken == null || refreshToken.isBlank())
+			throw new RuntimeException("Refresh token is required");
+
+		RefreshToken token = refreshTokenService.verifyRefreshToken(refreshToken);
+		User user = token.getUser();
+		refreshTokenService.revokeRefreshToken(refreshToken);
+		user.setTokenVersion(user.getTokenVersion() + 1);
+		userRepository.save(user);
+
+		return ApiResponse.builder().success(true).statusCode(200).message("Logout successful").build();
+	}
+
+	@Override
+	@Transactional
+	public ApiResponse forgotPassword(ForgotPasswordRequest request)
+	        throws UnsupportedEncodingException, MessagingException {
+
+	    User user;
+
+	    if (!request.getText().contains("@")) {
+	        user = userRepository.findByUsername(request.getText())
+	                .orElseThrow(() -> new RuntimeException(
+	                        "User not found with username - " + request.getText()));
+	    } else {
+	        user = userRepository.findByEmail(request.getText())
+	                .orElseThrow(() -> new RuntimeException(
+	                        "User not found with Email - " + request.getText()));
+	    }
+
+	    passwordResetTokenRepository.deleteByUser(user);
+
+	    String token = UUID.randomUUID().toString();
+
+	    PasswordResetToken resetToken = PasswordResetToken.builder()
+	            .token(token)
+	            .user(user)
+	            .expiresAt(LocalDateTime.now().plusMinutes(15))
+	            .used(false)
+	            .build();
+
+	    passwordResetTokenRepository.save(resetToken);
+
+	    emailService.sendForgot(resetToken);
+
+	    String[] arrEmail = user.getEmail().split("@");
+
+	    return ApiResponse.builder()
+	            .success(true)
+	            .statusCode(200)
+	            .message("Password reset link has been sent to your email- "
+	                    + arrEmail[0].substring(0, Math.min(2, arrEmail[0].length()))
+	                    +"***"
+	                    + "@" + arrEmail[1])
+	            .build();
+	}
+
+	@Override
+	@Transactional
+	public ApiResponse changePassword(Long userId, ChangePasswordRequest request) {
+		
+		User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+		
+		if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) throw new RuntimeException("Current password is incorrect");
+		if (request.getOldPassword().equals(request.getNewPassword())) throw new RuntimeException("New password must be different " + "from current password");
+		if (!request.getNewPassword().equals(request.getConfirmPassword())) throw new RuntimeException("New password and confirm password " + "do not match");
+		
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+		userRepository.save(user);
+		refreshTokenService.revokeAllUserTokens(user);
+		return ApiResponse.builder().success(true).statusCode(200).message("Password changed successfully").build();
+	}
+
+	@Override
+	@Transactional
+	public ApiResponse forgotChangePassword(ChangeForgotPassword req, String token) {
+
+	    if (!req.getPassword().equals(req.getConfirmPassword()))  throw new RuntimeException("Passwords do not match.");
+	    
+	    PasswordResetToken pReset = passwordResetTokenRepository.findByToken(token).orElseThrow(() ->  new RuntimeException("Token related to reset link not found."));
+
+	    if (Boolean.TRUE.equals(pReset.getUsed()))  throw new RuntimeException("This password reset link has already been used. Please request a new reset link." );
+	    if (pReset.getExpiresAt().isBefore(LocalDateTime.now()))  throw new RuntimeException(  "Reset link expired. Please request a new reset link.");
+	    
+	    User user = pReset.getUser();
+
+	    user.setPassword(passwordEncoder.encode(req.getPassword()));
+	    userRepository.save(user);
+	    pReset.setUsed(true);
+
+	    passwordResetTokenRepository.save(pReset);
+
+	    return ApiResponse.builder()
+	            .success(true)
+	            .statusCode(200)
+	            .message("Password changed successfully. Please login with your new password.")
+	            .build();
+	}
+
+	@Override
+	@Transactional
+	public ApiResponse stopForgotPassword(String token) {
+		passwordResetTokenRepository.deleteByToken(token);
+		return ApiResponse.builder().success(true).statusCode(200)
+				.message("Account is secure and Link is not valid").build();
+	}
+}

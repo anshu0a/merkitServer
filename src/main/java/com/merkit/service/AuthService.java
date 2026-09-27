@@ -1,0 +1,35 @@
+package com.merkit.service;
+
+import java.io.UnsupportedEncodingException;
+
+import com.merkit.dto.req.ChangeForgotPassword;
+import com.merkit.dto.req.ChangePasswordRequest;
+import com.merkit.dto.req.ForgotPasswordRequest;
+import com.merkit.dto.req.LoginRequest;
+import com.merkit.dto.req.RefreshTokenRequest;
+import com.merkit.dto.req.RegisterRequest;
+import com.merkit.dto.res.ApiResponse;
+import com.merkit.dto.res.LoginResponse;
+import com.merkit.dto.res.TokenResponse;
+
+import jakarta.mail.MessagingException;
+
+public interface AuthService {
+
+    LoginResponse register(RegisterRequest request);
+
+    LoginResponse login(LoginRequest request);
+
+    TokenResponse refreshToken(RefreshTokenRequest request) ;
+
+    ApiResponse logout(String refreshToken);
+
+    ApiResponse forgotPassword(ForgotPasswordRequest request) throws UnsupportedEncodingException, MessagingException;
+
+    ApiResponse changePassword(Long userId, ChangePasswordRequest request);
+    
+    ApiResponse forgotChangePassword(ChangeForgotPassword req, String token);
+    
+    ApiResponse stopForgotPassword(String token);
+
+}
